@@ -7,9 +7,9 @@
 MFRC522 rfid(SS_PIN, RST_PIN); //RFID 라이브러리
 
 /* 등록된 RF CARD ID */
-#define CARD_1 E9
-#define CARD_2 59
-#define CARD_3 79
+#define CARD_1 0xE9
+#define CARD_2 0x59
+#define CARD_3 0x79
 
 SoftwareSerial HM10(2, 3); // RX, TX
 
@@ -31,7 +31,7 @@ void loop() {
     return;
 
 
-  Serial.print(F("PICC type: "));
+//  Serial.print(F("PICC type: "));
   //PICC 타입 읽어오기
   MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
 //  Serial.println(rfid.PICC_GetTypeName(piccType));
@@ -49,21 +49,25 @@ void loop() {
   //ID가 등록된 ID와 동일하다면
   if (rfid.uid.uidByte[0] == CARD_1 ||
       rfid.uid.uidByte[0] == CARD_2 ||
-      rfid.uid.uidByte[0] == CARD_3 || ) {
+      rfid.uid.uidByte[0] == CARD_3 ) {
 
         Serial.println("Confirmed Card");
-        printHex(rfid.uid.uidByte, rfid.uid.size);
+//        printHex(rfid.uid.uidByte, rfid.uid.size);
         if (rfid.uid.uidByte[0] == CARD_1) {
+          Serial.println("CARD_1");
           HM10.println("AT+CONNA810871D107A");
           delay(1000);
+          HM10.println("Card 1 detected");
         }
         else if (rfid.uid.uidByte[0] == CARD_2 ) {
-          HM10.println("AT+CONNA810871B48C3");
-          delay(1000);
+          Serial.println("CARD_2");
+//          HM10.println("AT+CONNA810871B48C3");
+//          delay(1000);
         }
         else if (rfid.uid.uidByte[0] == CARD_3 ) {
-          HM10.println("AT+CONNA810871D1817");
-          delay(1000);
+          Serial.println("CARD_3");
+//          HM10.println("AT+CONNA810871D1817");
+//          delay(1000);
         }
   }
   
