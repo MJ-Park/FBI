@@ -17,7 +17,7 @@ AltSoftSerial HM10;
 
 void setup() { 
   //시리얼 모니터 시작
-  Serial.begin(9600);
+//  Serial.begin(9600);
   HM10.begin(9600);
   SPI.begin(); // SPI 시작
   rfid.PCD_Init(); // RF 모듈 시작
@@ -43,7 +43,7 @@ void loop() {
   if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&  
     piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
     piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
-    Serial.println(F("Your tag is not of type MIFARE Classic."));
+//    Serial.println(F("Your tag is not of type MIFARE Classic."));
     return;
   }
 
@@ -63,7 +63,6 @@ if (rfid.uid.uidByte[0] == CARD_1 ||
     }
     else if (rfid.uid.uidByte[0] == CARD_2 )
     {
-        Serial.println("CARD_2");
       HM10.write("AT+CONA810871B48C3");
       delay(1000);
       HM10.print("\nCard 2 detected\n");
