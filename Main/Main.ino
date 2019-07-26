@@ -55,17 +55,27 @@ void loop() {
 //        printHex(rfid.uid.uidByte, rfid.uid.size);
         if (rfid.uid.uidByte[0] == CARD_1) {
           Serial.println("CARD_1");
-          HM10.println("AT+CONNA810871D107A");
+//          HM10.println("AT+CONA810871D107A");
+          Serial.print("AT+CONA810871D107A\r\n");
+//          Serial.println("AT+CONA810871D107A");
+
           delay(1000);
           HM10.println("Card 1 detected");
+//          HM10.println("AT+RESET");
+          Serial.print("AT+RESET\r\n");
         }
         else if (rfid.uid.uidByte[0] == CARD_2 ) {
           Serial.println("CARD_2");
-//          HM10.println("AT+CONNA810871B48C3");
-//          delay(1000);
+//          HM10.print("AT+CONAA810871B48C3");
+          Serial.print("AT+CONAA810871B48C3\r\n");
+//          Serial.println("AT+CONAA810871B48C3");
+          delay(1000);
+          HM10.println("Card 2 detected");
+//          HM10.print("AT+RESET");
+          Serial.print("AT+RESET\r\n");
         }
         else if (rfid.uid.uidByte[0] == CARD_3 ) {
-          Serial.println("CARD_3");
+//          Serial.println("CARD_3");
 //          HM10.println("AT+CONNA810871D1817");
 //          delay(1000);
         }
