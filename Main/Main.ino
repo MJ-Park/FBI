@@ -1,9 +1,10 @@
 #include <SPI.h>
 #include <MFRC522.h>
-#include <SoftwareSerial.h>
+#include <AltSoftSerial.h>
 
 #define SS_PIN 10   //RFID SS(SDA:ChipSelect) PIN
-#define RST_PIN 9   //RFID Reset PIN
+//#define RST_PIN 9   //RFID Reset PIN
+#define RST_PIN 7
 MFRC522 rfid(SS_PIN, RST_PIN); //RFID 라이브러리
 
 /* 등록된 RF CARD ID */
@@ -11,7 +12,8 @@ MFRC522 rfid(SS_PIN, RST_PIN); //RFID 라이브러리
 #define CARD_2 0x59
 #define CARD_3 0x79
 
-SoftwareSerial HM10(2, 3); // RX, TX
+AltSoftSerial HM10;
+//SoftwareSerial HM10(2, 3); // RX, TX
 
 void setup() { 
   //시리얼 모니터 시작
@@ -46,39 +48,29 @@ void loop() {
   }
 
 
-  //ID가 등록된 ID와 동일하다면
-  if (rfid.uid.uidByte[0] == CARD_1 ||
-      rfid.uid.uidByte[0] == CARD_2 ||
-      rfid.uid.uidByte[0] == CARD_3 ) {
-
-        Serial.println("Confirmed Card");
-//        printHex(rfid.uid.uidByte, rfid.uid.size);
-        if (rfid.uid.uidByte[0] == CARD_1) {
-          Serial.println("CARD_1");
-//          HM10.println("AT+CONA810871D107A");
-          Serial.print("AT+CONA810871D107A\r\n");
-//          Serial.println("AT+CONA810871D107A");
-
-          delay(1000);
-          HM10.println("Card 1 detected");
-//          HM10.println("AT+RESET");
-          Serial.print("AT+RESET\r\n");
-        }
-        else if (rfid.uid.uidByte[0] == CARD_2 ) {
-          Serial.println("CARD_2");
-//          HM10.print("AT+CONAA810871B48C3");
-          Serial.print("AT+CONAA810871B48C3\r\n");
-//          Serial.println("AT+CONAA810871B48C3");
-          delay(1000);
-          HM10.println("Card 2 detected");
-//          HM10.print("AT+RESET");
-          Serial.print("AT+RESET\r\n");
-        }
-        else if (rfid.uid.uidByte[0] == CARD_3 ) {
-//          Serial.println("CARD_3");
-//          HM10.println("AT+CONNA810871D1817");
-//          delay(1000);
-        }
+//ID가 등록된 ID와 동일하다면
+if (rfid.uid.uidByte[0] == CARD_1 ||
+    rfid.uid.uidByte[0] == CARD_2 ||)
+  {
+    if (rfid.uid.uidByte[0] == CARD_1)
+    {
+      HM10.write("AT+CONA810871D107A");
+      delay(1000);
+      HM10.print("\nCard 1 detected\n");
+      delay(1000);
+      HM10.write("AT+RESET");
+      delay(1000);
+    }
+    else if (rfid.uid.uidByte[0] == CARD_2 )
+    {
+        Serial.println("CARD_2");
+      HM10.write("AT+CONA810871B48C3");
+      delay(1000);
+      HM10.print("\nCard 2 detected\n");
+      delay(1000);
+      HM10.write("AT+RESET");
+      delay(1000);
+    }
   }
   
   //종료
@@ -88,10 +80,3 @@ void loop() {
   //다시 시작!
 }
 
-//16진수 표시
-void printHex(byte *buffer, byte bufferSize) {
-  for (byte i = 0; i < bufferSize; i++) {
-    Serial.print(buffer[i] < 0x10 ? " 0" : " ");
-    Serial.print(buffer[i], HEX);
-  }
-}

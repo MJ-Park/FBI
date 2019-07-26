@@ -59,4 +59,7 @@ void loop()
         Serial.write(c);
         if (c==10) { NL = true; }
     }
+
+//    BTserial.write("AT");
+//    delay(100);
 }

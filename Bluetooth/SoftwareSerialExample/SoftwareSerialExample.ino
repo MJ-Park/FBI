@@ -51,5 +51,8 @@ void loop() { // run over and over
   if (Serial.available()) {
     mySerial.write(Serial.read());
   }
+
+  delay(100);
+//  Serial.println("AT");
 }
 
