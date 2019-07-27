@@ -105,21 +105,11 @@ void drawUSER(int user) {
 
 void drawTimer(unsigned long inputNum) {
   uint8_t tmpNum = inputNum / 1000;
-  if(countNum - tmpNum >= 10) {
-    tft.setCursor(TEXT_TIMER_X+20, TEXT_TIMER_Y+20);
-    tft.setTextColor(RED,BLACK);
-    tft.setTextSize(5);
-    tft.print(countNum - tmpNum);
-  }
-  else {
-    tft.setCursor(TEXT_TIMER_X, TEXT_TIMER_Y+20);
-    tft.setTextColor(RED,BLACK);
-    tft.setTextSize(5);
-    tft.print(" ");
-    tft.print(countNum - tmpNum);
-    tft.print(" ");
-    tft.drawRect(80, 100, 90, 90, WHITE);
-  }
+  tft.setCursor(TEXT_TIMER_X+20, TEXT_TIMER_Y+20);
+  tft.setTextColor(RED,BLACK);
+  tft.setTextSize(5);
+  tft.print(countNum - tmpNum);
+  if(countNum - tmpNum < 10)  tft.print(" ");
 }
 
 void timerUP() {
