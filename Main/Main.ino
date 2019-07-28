@@ -130,16 +130,17 @@ void drawUSER(int user) {
 }
 
 void drawBOOK(int user) {
-  waitSecs(1);
-  tft.setCursor(TEXT1_X+15, TEXT1_Y+50);
+  tft.setCursor(TEXT1_X+10, TEXT1_Y+100);
   tft.setTextColor(WHITE,BLACK);
-  tft.setTextSize(2);
+  tft.setTextSize(1.5);
   tft.println("BOOK LIST");
+
+  tft.setCursor(TEXT1_X+20, TEXT1_Y+120);
+  tft.setTextSize(2);
   if(user == 0) {
-    tft.print("       ");
+    tft.print("  ");
   }
   else {
-    tft.print("  ");
     tft.print(user);
   }
 
