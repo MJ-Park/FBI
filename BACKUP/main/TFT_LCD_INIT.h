@@ -1,6 +1,7 @@
 #include <MCUFRIEND_kbv.h>
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <TouchScreen.h>
+//#include <MsTimer2.h>
 
 #if defined(__SAM3X8E__)
     #undef __FlashStringHelper::F(string_literal)

@@ -1,6 +1,10 @@
 #include "RFID_HM10_INIT.h"
 #include "TFT_LCD_INIT.h"
 
+int USER_ARRAY[3] = {9,9,9};
+uint8_t BOOKED_USER = 0;
+const int MAX_BOOKED_USER = 2;
+
 void setup() {
   Serial.begin(9600);
   pinMode(39,OUTPUT);
@@ -13,8 +17,7 @@ void setup() {
   tft.fillScreen(BLACK);
   makeObj();
 
-//  HM10.begin(9600);
-  Serial1.begin(9600); // HM10 시작
+  HM10.begin(9600);
   SPI.begin(); // SPI 시작
   rfid.PCD_Init(); // RF 모듈 시작
   makeSound();
@@ -29,14 +32,44 @@ if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial())
 
   //ID가 등록된 ID와 동일한지 체크
   if (rfid.uid.uidByte[0] == CARD_1 ||
-      rfid.uid.uidByte[0] == CARD_2   )
+      rfid.uid.uidByte[0] == CARD_2 ||
+      rfid.uid.uidByte[0] == CARD_3)
     {
-      if(rfid.uid.uidByte[0] == CARD_1)      card_Detected(1);
-      else                                   card_Detected(2);
+      if (rfid.uid.uidByte[0] == CARD_1)
+      {
+        makeSound();
+        card_Detected('1');
+        Serial.println("1번 찍힘");
+        Serial.print("BOOKED_USER : ");
+        Serial.println(BOOKED_USER);
+      }
+      else if (rfid.uid.uidByte[0] == CARD_2 )
+      {
+        makeSound();
+        card_Detected('2');
+        Serial.println("2번 찍힘");
+        Serial.print("BOOKED_USER : ");
+        Serial.println(BOOKED_USER);
+      }
+      else if (rfid.uid.uidByte[0] == CARD_3 )
+      {
+        makeSound();
+        card_Detected('3');
+        Serial.println("3번 찍힘");
+        Serial.print("BOOKED_USER : ");
+        Serial.println(BOOKED_USER);
+      }
     }
+    Serial.print("ARRAY[0] : ");
+    Serial.println(USER_ARRAY[0]);
+    Serial.print("ARRAY[1] : ");
+    Serial.println(USER_ARRAY[0]);
+    Serial.print("ARRAY[2] : ");
+    Serial.println(USER_ARRAY[0]);
     rfid.PICC_HaltA();
     rfid.PCD_StopCrypto1();
 }
+  
   digitalWrite(13, HIGH);
   TSPoint p = ts.getPoint();
   digitalWrite(13, LOW);
@@ -64,8 +97,7 @@ if (rfid.PICC_IsNewCardPresent() && rfid.PICC_ReadCardSerial())
       drawTimer(presentTime - startTime);
     }
     makeSound();
-//    delay(1000);
-    waitSecs(1);
+    delay(1000);
     TIMER_INIT();
   }
   
@@ -98,7 +130,6 @@ void makeObj() {
   tft.drawRect(80, 100, 90, 90, WHITE);
   drawFREE();
   TIMER_INIT();
-  drawBOOK(0);
 }
 
 void TIMER_INIT() {
@@ -109,7 +140,6 @@ void TIMER_INIT() {
 }
 
 void drawFREE() {
-  waitSecs(1);
   tft.setCursor(TEXT1_X+25, TEXT1_Y+27);
   tft.setTextColor(WHITE,BLACK);
   tft.setTextSize(3.8);
@@ -117,8 +147,6 @@ void drawFREE() {
 }
 
 void drawUSER(int user) {
-//  delay(1000);
-  waitSecs(1);
   tft.setCursor(TEXT1_X+25, TEXT1_Y+27);
   tft.setTextColor(WHITE,BLACK);
   tft.setTextSize(3.8);
@@ -127,22 +155,6 @@ void drawUSER(int user) {
   if(user < 10) {
     tft.print(" ");
   }
-}
-
-void drawBOOK(int user) {
-  waitSecs(1);
-  tft.setCursor(TEXT1_X+15, TEXT1_Y+50);
-  tft.setTextColor(WHITE,BLACK);
-  tft.setTextSize(2);
-  tft.println("BOOK LIST");
-  if(user == 0) {
-    tft.print("       ");
-  }
-  else {
-    tft.print("  ");
-    tft.print(user);
-  }
-
 }
 
 void drawTimer(unsigned long inputNum) {
@@ -173,142 +185,69 @@ void timerDOWN() {
 }
 
 void makeSound() {
-//  tone(39, 784, 300);
-  tone(39, 800, 400);
+  tone(39, 784, 300);
 }
 
 /////////////////////// RFID, HM10 함수 //////////////////
 
-void connectHM10(int cardNum) {
-  if(cardNum == 1) {
-    Serial1.write("AT+CONA810871D107A");
-//    delay(1000);
-    waitSecs(1);
-    Serial1.print("\nCard 1 detected\n");
-//    delay(1000);
-    waitSecs(1);
-    Serial1.write("AT+RESET");
-    waitSecs(1);
-//    delay(1000);
+void connectHM10(char cardNum) {
+  if(cardNum == '1') {
+    HM10.write("AT+CONA810871D107A");
+    delay(1000);
+    HM10.print("\nCard 1 detected\n");
+    delay(1000);
+    HM10.write("AT+RESET");
+    delay(1000);
   }
-  else if(cardNum == 2) {
-    Serial1.write("AT+CONA810871B48C3");
-//    delay(1000);
-    waitSecs(1);
-    Serial1.print("\nCard 2 detected\n");
-//    delay(1000);
-    waitSecs(1);
-    Serial1.write("AT+RESET");
-//    delay(1000);
-    waitSecs(1);
+  else if(cardNum == '2') {
+    HM10.write("AT+CONA810871B48C3");
+    delay(1000);
+    HM10.print("\nCard 2 detected\n");
+    delay(1000);
+    HM10.write("AT+RESET");
+    delay(1000);
   }
-}
-
-void card_Detected(int cardNum) {
-  makeSound();
-  tft.setCursor(TEXT1_X+25, TEXT1_Y+27);
-  tft.setTextColor(WHITE,BLACK);
-  tft.setTextSize(3.8);
-  tft.print("        ");
-  
-  tft.setCursor(TEXT1_X+25, TEXT1_Y+30);
-  tft.setTextColor(WHITE,BLACK);
-  tft.setTextSize(2.8);
-  tft.print("USER ");
-  tft.print(cardNum);
-  tft.print(" ");
-  
-  if(cardNum==1) {
-    switch(BOOKING_STATE) {
-      case 0:             // 아무도 쓰고 있지 않을때 바로 1번 사용
-      BOOKING_STATE = 1;   
-      tft.print("starts");
-      drawUSER(1);
-      drawBOOK(0);
-      break;
-
-      case 1:             // 1번 혼자 쓰고 난 후 사용 종료
-      BOOKING_STATE = 0;
-      tft.print("ends");
-      drawFREE();
-      drawBOOK(0);
-      break;
-
-      case 2:             // 
-      BOOKING_STATE = 4;
-      tft.print("booked");
-      drawUSER(2);
-      drawBOOK(1);
-      break;
-
-      case 3:
-      BOOKING_STATE = 2;
-      tft.print("ends");
-      drawUSER(2);
-      connectHM10(2);
-      drawBOOK(0);
-//      사용자 : 2번 (HM10 호출)
-      break;
-
-      case 4:
-      BOOKING_STATE = 2;
-      tft.print("cancled");
-      drawUSER(2);
-      drawBOOK(0);
-//      사용자 : 2번
-      break;
-    }
-  }
-  else if(cardNum==2) {
-    switch(BOOKING_STATE) {
-      case 0:
-      BOOKING_STATE = 2;
-      tft.print("starts");
-      drawUSER(2);
-      drawBOOK(0);
-      break;
-
-      case 1:
-      BOOKING_STATE = 3;
-      tft.print("booked");
-      drawUSER(1);
-      drawBOOK(2);
-      break;
-
-      case 2:
-      BOOKING_STATE = 0;
-      tft.print("ends");
-      drawFREE();
-      drawBOOK(0);
-      break;
-
-      case 3:
-      BOOKING_STATE = 1;
-      tft.print("cancled");
-      drawUSER(1);
-      drawBOOK(0);
-      break;
-
-      case 4:
-      BOOKING_STATE = 1;
-      tft.print("ends");
-      drawUSER(1);
-      drawBOOK(0);
-      connectHM10(1);
-//      사용자 : 1번 (HM10으로 1번호출)
-      break;
-    }
-  }
-  else {
-    tft.print("cardNum ERROR");
+  else if (cardNum == '3') {
+    HM10.write("AT+CONA810871B488A");
+    delay(1000);
+    HM10.print("\nCard 3 detected\n");
+    delay(1000);
+    HM10.write("AT+RESET");
+    delay(1000);
   }
 }
 
-void waitSecs(float num) {
-    unsigned long Ts = millis();    // 시작시간
-    unsigned long Tn = millis();    // 현재시간
-    while (Tn - Ts <= num * 1000)
-    {
-      Tn = millis();
+int isBookedUser(char cardNum) {
+  for(int i=0;i<MAX_BOOKED_USER;i++) {
+    if(USER_ARRAY[i] == cardNum) return i;  // 이미 예약되어있으면 그자리 
+  }
+  return 0;   
+}
+
+void card_Detected(char cardNum) {
+  if(BOOKED_USER == 0) {    // 예약자가 아무도 없는 경우에
+    connectHM10(cardNum);
+    USER_ARRAY[BOOKED_USER] = cardNum;
+    BOOKED_USER++;
+  }
+  else if (isBookedUser(cardNum) > 0)    // 예약되어있는 사람이 카드를 찍은 경우,
+  {                                 
+    BOOKED_USER--;
+    if(isBookedUser(cardNum) == 1) {  // 첫번째 사람이 운동 끝나고 찍은경우라면
+      if(BOOKED_USER > 0) {
+        USER_ARRAY[0] = USER_ARRAY[1];
+        USER_ARRAY[1] = USER_ARRAY[2];
+        USER_ARRAY[2] = ' ';
+        connectHM10(USER_ARRAY[0]);
+      }
+      else {                          // 그 이후의 사람이 찍은 경우라면 취소 (추후 구현)
+        
+      }
     }
+  }
+  else                    // 예약자가 아닌 사람이 찍은 경우
+  {
+    USER_ARRAY[BOOKED_USER] = cardNum;
+    BOOKED_USER++;
+  }
 }

@@ -98,7 +98,6 @@ void makeObj() {
   tft.drawRect(80, 100, 90, 90, WHITE);
   drawFREE();
   TIMER_INIT();
-  drawBOOK(0);
 }
 
 void TIMER_INIT() {
@@ -109,7 +108,6 @@ void TIMER_INIT() {
 }
 
 void drawFREE() {
-  waitSecs(1);
   tft.setCursor(TEXT1_X+25, TEXT1_Y+27);
   tft.setTextColor(WHITE,BLACK);
   tft.setTextSize(3.8);
@@ -127,22 +125,6 @@ void drawUSER(int user) {
   if(user < 10) {
     tft.print(" ");
   }
-}
-
-void drawBOOK(int user) {
-  waitSecs(1);
-  tft.setCursor(TEXT1_X+15, TEXT1_Y+50);
-  tft.setTextColor(WHITE,BLACK);
-  tft.setTextSize(2);
-  tft.println("BOOK LIST");
-  if(user == 0) {
-    tft.print("       ");
-  }
-  else {
-    tft.print("  ");
-    tft.print(user);
-  }
-
 }
 
 void drawTimer(unsigned long inputNum) {
@@ -224,29 +206,25 @@ void card_Detected(int cardNum) {
       BOOKING_STATE = 1;   
       tft.print("starts");
       drawUSER(1);
-      drawBOOK(0);
       break;
 
       case 1:             // 1번 혼자 쓰고 난 후 사용 종료
       BOOKING_STATE = 0;
       tft.print("ends");
       drawFREE();
-      drawBOOK(0);
       break;
 
       case 2:             // 
       BOOKING_STATE = 4;
       tft.print("booked");
       drawUSER(2);
-      drawBOOK(1);
       break;
 
       case 3:
       BOOKING_STATE = 2;
       tft.print("ends");
       drawUSER(2);
-      connectHM10(2);
-      drawBOOK(0);
+      connectHM10(2);     // char -> int 바꾸기
 //      사용자 : 2번 (HM10 호출)
       break;
 
@@ -254,7 +232,6 @@ void card_Detected(int cardNum) {
       BOOKING_STATE = 2;
       tft.print("cancled");
       drawUSER(2);
-      drawBOOK(0);
 //      사용자 : 2번
       break;
     }
@@ -265,35 +242,30 @@ void card_Detected(int cardNum) {
       BOOKING_STATE = 2;
       tft.print("starts");
       drawUSER(2);
-      drawBOOK(0);
       break;
 
       case 1:
       BOOKING_STATE = 3;
       tft.print("booked");
       drawUSER(1);
-      drawBOOK(2);
       break;
 
       case 2:
       BOOKING_STATE = 0;
       tft.print("ends");
       drawFREE();
-      drawBOOK(0);
       break;
 
       case 3:
       BOOKING_STATE = 1;
       tft.print("cancled");
       drawUSER(1);
-      drawBOOK(0);
       break;
 
       case 4:
       BOOKING_STATE = 1;
       tft.print("ends");
       drawUSER(1);
-      drawBOOK(0);
       connectHM10(1);
 //      사용자 : 1번 (HM10으로 1번호출)
       break;
@@ -304,7 +276,7 @@ void card_Detected(int cardNum) {
   }
 }
 
-void waitSecs(float num) {
+waitSecs(float num); {
     unsigned long Ts = millis();    // 시작시간
     unsigned long Tn = millis();    // 현재시간
     while (Tn - Ts <= num * 1000)
