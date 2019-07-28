@@ -5,6 +5,8 @@ AltSoftSerial altSerial;
 void setup() {
   altSerial.begin(9600);
   pinMode(6,OUTPUT);
+  digitalWrite(6,HIGH);
+  delay(1000);
   digitalWrite(6,LOW);
 }
 
@@ -18,3 +20,4 @@ void loop() {
   }
 }
 
+// 모터 6번, hm10 rx->9 tx->8
